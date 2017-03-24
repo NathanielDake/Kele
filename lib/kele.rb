@@ -9,9 +9,20 @@ class Kele
     @auth_token = response["auth_token"]
   end
 
+  #retrieve myself as a bloc user in the form of a JSON blob
   def get_me
     response = self.class.get(base_api_endpoint("users/me"), headers: { "authorization" => @auth_token })
     @user_data = JSON.parse(response.body)
+  end
+
+  def get_mentor_id
+    get_me["current_enrollment"]["mentor_id"]
+  end
+
+  #retrieve my mentors availability
+  def get_mentor_availability(mentor_id)
+    response = self.class.get(base_api_endpoint("mentors/#{mentor_id}/student_availability"), headers: { "authorization" => @auth_token })
+    @mentor_availability = JSON.parse(response.body)
   end
 
   private
@@ -34,3 +45,9 @@ end
 #response is generated (200 is success), which includes an authorization
 #token. reference to blocs doc on API:
 #http://docs.blocapi.apiary.io/#reference/0/sessions/retreive-auth-token
+
+#get_me uses the HTTParty's (self.class) get method, which takes a url, and
+# a set of options, in this case header containing an authorization
+#and returns a response object, set equal to response. This response
+#has a body property which is parsed by the JSON parse method. and set to
+#be the @user_data
