@@ -1,7 +1,10 @@
 require "httparty"
+require '/Users/Nate/Development/Kele/lib/roadmap.rb'
+
 
 class Kele
   include HTTParty
+  include Roadmap
 
   def initialize(email, password)
     response = self.class.post(base_api_endpoint("sessions"), body: { "email": email, "password": password })
